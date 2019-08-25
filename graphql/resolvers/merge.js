@@ -1,6 +1,25 @@
-const Event = require('../models/event');
-const User = require('../models/user');
-const Booking = require('../models/booking');
+const Event = require('../../models/event');
+const User = require('../../models/user');
+
+const { dateConvert } = require('../../helpers/date');
+
+const transformBooking = booking => {
+  return {
+    ...booking._doc,
+    event: oneEvent.bind(this, booking.event),
+    user: user.bind(this, booking.user),
+    createdAt: dateConvert(booking.createdAt),
+    updatedAt: dateConvert(booking.updatedAt)
+  };
+};
+
+const transformEvent = event => {
+  return {
+    ...event._doc,
+    date: dateConvert(event.date),
+    creator: user.bind(this, event.creator)
+  };
+};
 
 const user = async userId => {
   try {
@@ -35,14 +54,8 @@ const oneEvent = async eventId => {
   }
 };
 
-module.exports = dateConvert = date => {
-  return new Date(date).toISOString();
-};
-
-module.exports = transformEvent = event => {
-  return {
-    ...event._doc,
-    date: dateConvert(event.date),
-    creator: user.bind(this, event.creator)
-  };
-};
+exports.user = user;
+exports.events = events;
+exports.oneEvent = oneEvent;
+exports.transformEvent = transformEvent;
+exports.transformBooking = transformBooking;

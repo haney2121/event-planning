@@ -4,6 +4,7 @@ const express = require('express');
 const graphqlHttp = require('express-graphql');
 //connection to the Mongodb by using mongoose and Model
 const mongoose = require('mongoose');
+const isAuth = require('./middleware/isAuth');
 
 const graphqlSchema = require('./graphql/schema/');
 const graphqlResolvers = require('./graphql/resolvers/');
@@ -15,6 +16,8 @@ const app = express();
 
 //converts the body to json
 app.use(bodyParser.json());
+
+app.use(isAuth);
 
 //setting up api route with graphql middleware with the resolvers and schemas
 app.use(
