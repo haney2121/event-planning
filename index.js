@@ -2,19 +2,16 @@
 const express = require('express');
 //used in placed where express expects middleware, takes incoming request and forward to the graphql - Type Function
 const graphqlHttp = require('express-graphql');
-//function that a literal string to define a schema
-const { buildSchema } = require('graphql');
 //connection to the Mongodb by using mongoose and Model
 const mongoose = require('mongoose');
-const Event = require('./models/event');
+
+const graphqlSchema = require('./graphql/schema/');
+const graphqlResolvers = require('./graphql/resolvers/');
 
 //getting all bodies from incoming request
 const bodyParser = require('body-parser');
-
 //setup server
 const app = express();
-
-const events = [];
 
 //converts the body to json
 app.use(bodyParser.json());
@@ -23,59 +20,8 @@ app.use(bodyParser.json());
 app.use(
   '/graphql',
   graphqlHttp({
-    schema: buildSchema(`
-      type Event {
-        _id: ID!
-        title: String!
-        description: String!
-        price: Float!
-        date: String!
-      }
-
-      input EventInput {
-        title: String!
-        description: String!
-        price: Float!
-        date: String!
-      }
-
-      type RootQuery {
-        events: [Event!]!
-      }
-
-      type RootMutation {
-        createEvent(eventInput: EventInput): Event
-      }
-
-      schema {
-        query: RootQuery
-        mutation: RootMutation
-      }
-    `),
-    rootValue: {
-      events: async () => {
-        let events = await Event.find({});
-        return events;
-      },
-      createEvent: async args => {
-        const { title, description, price, date } = args.eventInput;
-        //Mongoose model
-        const event = new Event({
-          title,
-          description,
-          price: +price,
-          date: new Date(date)
-        });
-        try {
-          let addEvent = await event.save();
-          console.log(addEvent);
-          return addEvent;
-        } catch (e) {
-          console.log(e);
-          throw new Error(e.message);
-        }
-      }
-    },
+    schema: graphqlSchema,
+    rootValue: graphqlResolvers,
     graphiql: true
   })
 );
