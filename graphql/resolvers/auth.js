@@ -44,7 +44,13 @@ module.exports = {
       `${process.env.AUTH_SECRET}`,
       { expiresIn: '1h' }
     );
-    return { userId: user.id, token: token, tokenExpiration: 1 };
+    return {
+      userId: user.id,
+      token: token,
+      tokenExpiration: 1,
+      name: user.name,
+      email: user.email
+    };
   },
   createUser: async args => {
     const { email, name, password } = args.userInput;

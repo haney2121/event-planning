@@ -31,6 +31,8 @@ module.exports = buildSchema(`
         userId: ID!
         token: String!
         tokenExpiration: Int!
+        name: String!
+        email: String!
       }
 
       input EventInput {
